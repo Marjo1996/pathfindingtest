@@ -27,6 +27,7 @@ class AStar{
     List<PriorityQueue<Node>> q = [PriorityQueue<Node>((a, b) => a.FValue.compareTo(b.FValue)),PriorityQueue<Node>((a, b) => a.FValue.compareTo(b.FValue))];
 
 
+    // Put the first node in the queue
     pNode1 = Node(startRow, startCol, 0, 0);
     pNode1.calculateFValue(finishRow, finishCol);
     q[qi].add(pNode1);
@@ -64,14 +65,15 @@ class AStar{
         // empty the leftover nodes
           while (!q[qi].isEmpty) q[qi].removeFirst();
 
-            print(finalPath);
           return finalPath;
           }
 
+        // Control all directions
         for (i = 0; i < NDIR; i++) {
           iNext = row + iDir[i];
           jNext = col + jDir[i];
 
+          // If you can explore this direction
           if (!(iNext < 0 || iNext > IDIM - 1 || jNext < 0 || jNext > JDIM - 1 ||
               gridMatrix[iNext][jNext] == 1 || closed_nodes[iNext][jNext] == 1)) {
 
@@ -80,16 +82,18 @@ class AStar{
               pNode2.calculateFValue(finishRow, finishCol);
 
 
+              // If this node is not explore yet
             if (open_nodes[iNext][jNext] == 0) {
                 open_nodes[iNext][jNext] = pNode2.getFValue();
                 q[qi].add(pNode2);
 
                 dir_mat[iNext][jNext] = ((i + NDIR / 2) % NDIR).toInt();
-              }
+              } // Otherwise you have found a better path and update to the new path
             else if (open_nodes[iNext][jNext] > pNode2.getFValue()) {
               open_nodes[iNext][jNext] = pNode2.getFValue();
               dir_mat[iNext][jNext] = ((i + NDIR / 2) % NDIR).toInt();
 
+              // Find the path that reach the better path
               while (!(q[qi].first.rowPos == iNext &&
                   q[qi].first.colPos == jNext)) {
                 q[1 - qi].add(q[qi].first);
