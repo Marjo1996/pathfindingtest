@@ -37,7 +37,7 @@ class GridLayoutTest extends State<TestGrid> {
                     return GridView.builder(
                       itemCount: nTotalCount,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: N_ROW,
+                        crossAxisCount: N_COL,
                         childAspectRatio:
                         constraints.maxWidth / constraints.maxHeight,
                       ),
@@ -74,6 +74,11 @@ class GridLayoutTest extends State<TestGrid> {
                                   child: GestureDetector(
                                     onTap: () {
                                       setState(() {
+                                        for(int i = 0; i < path.length-1; i++)
+                                        {
+                                          mat[path[i].y.toInt()][path[i].x.toInt()] = 0;
+                                        }
+
                                         // Muro
                                         if(operation_type == 0) {
                                           if (mat[(index / N_COL).toInt()][index % N_COL] == 0) {
@@ -86,11 +91,6 @@ class GridLayoutTest extends State<TestGrid> {
                                         // Start
                                         else if(operation_type == 1)
                                         {
-                                          for(int i = 0; i < path.length-1; i++)
-                                          {
-                                            mat[path[i].y.toInt()][path[i].x.toInt()] = 0;
-                                          }
-
                                           if(insertStart) {
                                             mat[start.y.toInt()][start.x.toInt()] = 0;
                                           }
@@ -101,11 +101,6 @@ class GridLayoutTest extends State<TestGrid> {
                                         // Finish
                                         else if(operation_type == 2)
                                         {
-                                          for(int i = 0; i < path.length-1; i++)
-                                          {
-                                            mat[path[i].y.toInt()][path[i].x.toInt()] = 0;
-                                          }
-
                                           if(insertFinish) {
                                             mat[finish.y.toInt()][finish.x.toInt()] = 0;
                                           }
@@ -180,17 +175,16 @@ class GridLayoutTest extends State<TestGrid> {
               onChanged: (String a){
                 try {
                   int row = int.parse(a);
-                  int col;
                   setState((){
                     if(row <= 0)
                       {
-                        row = col = 1;
+                        row = 1;
                       }
                     else if(row > 100)
                       {
-                        row = col = 100;
+                        row = 100;
                       }
-                    N_ROW = N_COL = row;
+                    N_ROW = row;
                     nTotalCount = N_ROW * N_COL;
                     mat = List.generate(N_ROW, (a) => List.generate(N_COL, (a) => Random().nextInt(1)));
                   });
@@ -200,8 +194,33 @@ class GridLayoutTest extends State<TestGrid> {
                   print('$e');
                 }
               },
-                decoration: InputDecoration(labelText: "Size"),
+                decoration: InputDecoration(labelText: "Row(Max 100)"),
                 keyboardType: TextInputType.number),
+            TextField(
+                onChanged: (String a){
+                  try {
+                    int col = int.parse(a);
+                    setState((){
+                      if(col <= 0)
+                      {
+                        col = 1;
+                      }
+                      else if(col > 100)
+                      {
+                        col = 100;
+                      }
+                      N_COL = col;
+                      nTotalCount = N_ROW * N_COL;
+                      mat = List.generate(N_ROW, (a) => List.generate(N_COL, (a) => Random().nextInt(1)));
+                    });
+                  }
+                  catch(e)
+                  {
+                    print('$e');
+                  }
+                },
+                decoration: InputDecoration(labelText: "Column(Max 100)"),
+                keyboardType: TextInputType.number)
             ],
         ));
   }
